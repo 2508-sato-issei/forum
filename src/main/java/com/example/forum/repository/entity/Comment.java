@@ -4,20 +4,22 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
-@Table(name = "report")
+@Table(name = "comments")
 @Getter
 @Setter
-public class Report {
+public class Comment {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column
-    private String content;
+    private int reportId;
+
+    @Column
+    private String text;
 
 }

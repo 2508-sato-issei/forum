@@ -30,6 +30,18 @@
                 <input type="submit" value="編集"/>
             </a>
         </div>
+        <form th:action="@{/comment/{id}(id=${content.id})}" th:object="${formModel}" th:method="post">
+            <div class="form-area">
+                <label>コメント</label>
+                <textarea class="tweet-box" th:field="*{text}" size="20" maxlength="200"></textarea><br/>
+                <input type="submit" value="送信"/>
+            </div>
+        </form>
+        <div class="text" th:each="comment : ${comments}" th:if="${content.id == comment.reportId}">
+            <div class="text">
+                コメント : <span th:text="${comment.text}"/>
+            </div>
+        </div>
     </div>
 </div>
 </body>
