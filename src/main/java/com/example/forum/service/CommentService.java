@@ -26,6 +26,31 @@ public class CommentService {
     }
 
     /*
+     * レコード追加
+     */
+    public void saveComment(CommentForm reqComment) {
+        Comment saveComment = setCommentEntity(reqComment);
+        commentRepository.save(saveComment);
+    }
+
+    /*
+     * 編集対象レコード取得処理
+     */
+    public CommentForm editComment(Integer id) {
+        List<Comment> results = new ArrayList<>();
+        results.add(commentRepository.findById(id).orElse(null));
+        List<CommentForm> reports = setCommentForm(results);
+        return reports.get(0);
+    }
+
+    /*
+     * レコード削除
+     */
+    public void deleteComment(Integer id) {
+        commentRepository.deleteById(id);
+    }
+
+    /*
      * DBから取得したデータをFormに設定
      */
     private List<CommentForm> setCommentForm(List<Comment> results) {
@@ -36,18 +61,10 @@ public class CommentService {
             Comment result = results.get(i);
             comment.setId(result.getId());
             comment.setReportId(result.getReportId());
-            comment.setText(result.getText());
+            comment.setContent(result.getContent());
             comments.add(comment);
         }
         return comments;
-    }
-
-    /*
-     * レコード追加
-     */
-    public void saveComment(CommentForm reqComment) {
-        Comment saveComment = setCommentEntity(reqComment);
-        commentRepository.save(saveComment);
     }
 
     /*
@@ -57,7 +74,7 @@ public class CommentService {
         Comment comment = new Comment();
         comment.setId(reqComment.getId());
         comment.setReportId(reqComment.getReportId());
-        comment.setText(reqComment.getText());
+        comment.setContent(reqComment.getContent());
         return comment;
     }
 }

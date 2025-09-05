@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Entity
 @Table(name = "comments")
 @Getter
@@ -20,6 +18,6 @@ public class Comment {
     private int reportId;
 
     @Column
-    private String text;
+    private String content;
 
 }

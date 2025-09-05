@@ -68,17 +68,6 @@ public class ForumController {
     }
 
     /*
-     * 投稿削除処理
-     */
-    @DeleteMapping("/delete/{id}")
-    public ModelAndView deleteContent(@PathVariable Integer id) {
-        // 投稿をテーブルから削除
-        reportService.deleteReport(id);
-        // rootへリダイレクト
-        return new ModelAndView("redirect:/");
-    }
-
-    /*
      * 投稿編集画面表示処理
      */
     @GetMapping("/edit/{id}")
@@ -107,6 +96,17 @@ public class ForumController {
     }
 
     /*
+     * 投稿削除処理
+     */
+    @DeleteMapping("/delete/{id}")
+    public ModelAndView deleteContent(@PathVariable Integer id) {
+        // 投稿をテーブルから削除
+        reportService.deleteReport(id);
+        // rootへリダイレクト
+        return new ModelAndView("redirect:/");
+    }
+
+    /*
      * 新規コメント処理
      */
     @PostMapping("/comment/{reportId}")
@@ -119,4 +119,42 @@ public class ForumController {
         return new ModelAndView("redirect:/");
     }
 
+    /*
+     * コメント編集画面表示処理
+     */
+    @GetMapping("/editComment/{id}")
+    public ModelAndView editComment(@PathVariable Integer id) {
+        ModelAndView mav = new ModelAndView();
+        // 編集対象のコメントを取得
+        CommentForm comment = commentService.editComment(id);
+        // コメントデータオブジェクトを保管
+        mav.addObject("formModel", comment);
+        // 画面遷移先を指定
+        mav.setViewName("/editComment");
+        return mav;
+    }
+
+    /*
+     * コメント更新処理
+     */
+    @PutMapping("/updateComment/{id}")
+    public ModelAndView updateComment(@PathVariable Integer id, @ModelAttribute("formModel") CommentForm comment) {
+        // UrlParameterのidを更新するentityにセット
+        comment.setId(id);
+        // コメントを更新
+        commentService.saveComment(comment);
+        // rootへリダイレクト
+        return new ModelAndView("redirect:/");
+    }
+
+    /*
+     * コメント削除処理
+     */
+    @DeleteMapping("/deleteComment/{id}")
+    public ModelAndView deleteComment(@PathVariable Integer id) {
+        // コメントをテーブルから削除
+        commentService.deleteComment(id);
+        // rootへリダイレクト
+        return new ModelAndView("redirect:/");
+    }
 }

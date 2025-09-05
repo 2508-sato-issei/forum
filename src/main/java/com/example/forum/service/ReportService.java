@@ -24,6 +24,31 @@ public class ReportService {
     }
 
     /*
+     * レコード追加
+     */
+    public void saveReport(ReportForm reqReport) {
+        Report saveReport = setReportEntity(reqReport);
+        reportRepository.save(saveReport);
+    }
+
+    /*
+     * 編集対象レコード取得処理
+     */
+    public ReportForm editReport(Integer id) {
+        List<Report> results = new ArrayList<>();
+        results.add(reportRepository.findById(id).orElse(null));
+        List<ReportForm> reports = setReportForm(results);
+        return reports.get(0);
+    }
+
+    /*
+     * レコード削除
+     */
+    public void deleteReport(Integer id) {
+        reportRepository.deleteById(id);
+    }
+
+    /*
      * DBから取得したデータをFormに設定
      */
     private List<ReportForm> setReportForm(List<Report> results) {
@@ -40,14 +65,6 @@ public class ReportService {
     }
 
     /*
-     * レコード追加
-     */
-    public void saveReport(ReportForm reqReport) {
-        Report saveReport = setReportEntity(reqReport);
-        reportRepository.save(saveReport);
-    }
-
-    /*
      * リクエストから取得した情報をEntityに設定
      */
     private Report setReportEntity(ReportForm reqReport) {
@@ -55,22 +72,5 @@ public class ReportService {
         report.setId(reqReport.getId());
         report.setContent(reqReport.getContent());
         return report;
-    }
-
-    /*
-     * レコード削除
-     */
-    public void deleteReport(Integer id) {
-        reportRepository.deleteById(id);
-    }
-
-    /*
-     * 編集対象レコード取得処理
-     */
-    public ReportForm editReport(Integer id) {
-        List<Report> results = new ArrayList<>();
-        results.add(reportRepository.findById(id).orElse(null));
-        List<ReportForm> reports = setReportForm(results);
-        return reports.get(0);
     }
 }
