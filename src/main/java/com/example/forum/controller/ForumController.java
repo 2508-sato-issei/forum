@@ -41,6 +41,30 @@ public class ForumController {
         return mav;
     }
 
+    @GetMapping("/getByDate")
+    public ModelAndView getByDate(@RequestParam("start") String start, @RequestParam("end") String end) {
+        ModelAndView mav = new ModelAndView();
+        // form用の空のentityを準備
+        CommentForm commentForm = new CommentForm();
+        // 投稿を取得
+        List<ReportForm> contentData = reportService.findReport(start, end);
+        // コメントを全件取得
+        List<CommentForm> commentData = commentService.findAllComment();
+        // 画面遷移先を指定
+        mav.setViewName("/top");
+        // 投稿データオブジェクトを保管
+        mav.addObject("contents", contentData);
+        // コメントデータオブジェクトを保管
+        mav.addObject("comments", commentData);
+        //　開始日を保管
+        mav.addObject("start", start);
+        // 終了日を保管
+        mav.addObject("end", end);
+        // 準備した空のFormを保管
+        mav.addObject("formModel", commentForm);
+        return mav;
+    }
+
     /*
      * 新規投稿画面表示
      */

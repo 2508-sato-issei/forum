@@ -3,11 +3,17 @@ package com.example.forum.service;
 import com.example.forum.controller.form.ReportForm;
 import com.example.forum.repository.ReportRepository;
 import com.example.forum.repository.entity.Report;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class ReportService {
@@ -19,6 +25,32 @@ public class ReportService {
      */
     public List<ReportForm> findAllReport() {
         List<Report> results = reportRepository.findAll();
+        List<ReportForm> reports = setReportForm(results);
+        return reports;
+    }
+
+    /*
+     * レコードを取得
+     */
+    public List<ReportForm> findReport(String start, String end) {
+
+        // 開始日と終了日の加工
+        if (StringUtils.isNotEmpty(start)) {
+            start = start + " 00:00:00";
+        } else {
+            start = "2020-01-01 00:00:00";
+        }
+        if (StringUtils.isNotEmpty(end)) {
+            end = end + " 23:59:00";
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+            end = sdf.format(new Date());
+        }
+        Timestamp startDate = Timestamp.valueOf(start);
+        Timestamp endDate = Timestamp.valueOf(end);
+
+        List<Report> results = reportRepository.findByCreatedDateBetween(startDate, endDate);
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
@@ -71,6 +103,10 @@ public class ReportService {
         Report report = new Report();
         report.setId(reqReport.getId());
         report.setContent(reqReport.getContent());
+        if(Integer.valueOf(reqReport.getId()) != null) {
+            Timestamp updatedDate = Timestamp.valueOf(LocalDateTime.now());
+            report.setUpdatedDate(updatedDate);
+        }
         return report;
     }
 }

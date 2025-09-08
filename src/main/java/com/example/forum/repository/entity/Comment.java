@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "comments")
 @Getter
@@ -19,5 +21,11 @@ public class Comment {
 
     @Column
     private String content;
+
+    @Column(insertable = false, updatable = false)
+    private Timestamp createdDate;
+
+    @Column(insertable = false, updatable = true)
+    private Timestamp updatedDate;
 
 }
