@@ -41,6 +41,9 @@ public class ForumController {
         return mav;
     }
 
+    /*
+     * 投稿内容表示処理(日付絞り込みあり)
+     */
     @GetMapping("/getByDate")
     public ModelAndView getByDate(@RequestParam("start") String start, @RequestParam("end") String end) {
         ModelAndView mav = new ModelAndView();

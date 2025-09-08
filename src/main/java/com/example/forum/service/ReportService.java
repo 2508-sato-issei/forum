@@ -24,16 +24,15 @@ public class ReportService {
      * レコード全件取得処理
      */
     public List<ReportForm> findAllReport() {
-        List<Report> results = reportRepository.findAll();
+        List<Report> results = reportRepository.findAllByOrderByUpdatedDateDesc();
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
 
     /*
-     * レコードを取得
+     * レコード取得処理（日付絞り込み）
      */
     public List<ReportForm> findReport(String start, String end) {
-
         // 開始日と終了日の加工
         if (StringUtils.isNotEmpty(start)) {
             start = start + " 00:00:00";
@@ -50,7 +49,7 @@ public class ReportService {
         Timestamp startDate = Timestamp.valueOf(start);
         Timestamp endDate = Timestamp.valueOf(end);
 
-        List<Report> results = reportRepository.findByCreatedDateBetween(startDate, endDate);
+        List<Report> results = reportRepository.findByCreatedDateBetweenOrderByUpdatedDateDesc(startDate, endDate);
         List<ReportForm> reports = setReportForm(results);
         return reports;
     }
@@ -91,6 +90,8 @@ public class ReportService {
             Report result = results.get(i);
             report.setId(result.getId());
             report.setContent(result.getContent());
+            report.setCreatedDate(result.getCreatedDate());
+            report.setUpdatedDate(result.getUpdatedDate());
             reports.add(report);
         }
         return reports;
@@ -103,9 +104,8 @@ public class ReportService {
         Report report = new Report();
         report.setId(reqReport.getId());
         report.setContent(reqReport.getContent());
-        if(Integer.valueOf(reqReport.getId()) != null) {
-            Timestamp updatedDate = Timestamp.valueOf(LocalDateTime.now());
-            report.setUpdatedDate(updatedDate);
+        if (Integer.valueOf(reqReport.getId()) != null) {
+            report.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
         }
         return report;
     }
