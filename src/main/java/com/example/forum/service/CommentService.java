@@ -86,6 +86,9 @@ public class CommentService {
         comment.setId(reqComment.getId());
         comment.setReportId(reqComment.getReportId());
         comment.setContent(reqComment.getContent());
+        if (Integer.valueOf(reqComment.getId()) != null) {
+            comment.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
+        }
         return comment;
     }
 }

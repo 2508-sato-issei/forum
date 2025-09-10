@@ -4,8 +4,10 @@ import com.example.forum.controller.form.CommentForm;
 import com.example.forum.controller.form.ReportForm;
 import com.example.forum.service.CommentService;
 import com.example.forum.service.ReportService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -87,7 +89,13 @@ public class ForumController {
      * 新規投稿処理
      */
     @PostMapping("/add")
-    public ModelAndView addContent(@ModelAttribute("formModel") ReportForm reportForm) {
+    public ModelAndView addContent(@Valid @ModelAttribute("formModel") ReportForm reportForm, BindingResult bindingResult) {
+        //　バリデーションに引っかかった場合の処理
+        if (bindingResult.hasErrors()) {
+            ModelAndView mav = new ModelAndView();
+            mav.setViewName("/new");
+            return mav;
+        }
         // 投稿をテーブルに格納
         reportService.saveReport(reportForm);
         // rootへリダイレクト
@@ -113,7 +121,15 @@ public class ForumController {
      * 投稿更新処理
      */
     @PutMapping("/update/{id}")
-    public ModelAndView updateContent(@PathVariable Integer id, @ModelAttribute("formModel") ReportForm report) {
+    public ModelAndView updateContent(@PathVariable Integer id,
+                                      @Valid @ModelAttribute("formModel") ReportForm report,
+                                      BindingResult bindingResult) {
+        //　バリデーション処理
+        if (bindingResult.hasErrors()) {
+            ModelAndView mav = new ModelAndView();
+            mav.setViewName("/edit");
+            return mav;
+        }
         // UrlParameterのidを更新するentityにセット
         report.setId(id);
         // 投稿を更新
@@ -137,7 +153,26 @@ public class ForumController {
      * 新規コメント処理
      */
     @PostMapping("/comment/{reportId}")
-    public ModelAndView addComment(@PathVariable Integer reportId, @ModelAttribute("formModel") CommentForm commentForm) {
+    public ModelAndView addComment(@PathVariable Integer reportId,
+                                   @Valid @ModelAttribute("formModel") CommentForm commentForm,
+                                   BindingResult bindingResult) {
+        //　バリデーション違反があった場合の処理
+        if (bindingResult.hasErrors()) {
+            ModelAndView mav = new ModelAndView();
+            // 投稿を全件取得
+            List<ReportForm> contentData = reportService.findAllReport();
+            // コメントを全件取得
+            List<CommentForm> commentData = commentService.findAllComment();
+            // 画面遷移先を指定
+            mav.setViewName("/top");
+            // 投稿データオブジェクトを保管
+            mav.addObject("contents", contentData);
+            // コメントデータオブジェクトを保管
+            mav.addObject("comments", commentData);
+            // エラーメッセージを表示するフォームを特定するためのIDを保管
+            mav.addObject("showErrorId", reportId);
+            return mav;
+        }
         // UrlParameterのreportIdをentityにセット
         commentForm.setReportId(reportId);
         // コメントをテーブルに格納
@@ -165,7 +200,15 @@ public class ForumController {
      * コメント更新処理
      */
     @PutMapping("/updateComment/{id}")
-    public ModelAndView updateComment(@PathVariable Integer id, @ModelAttribute("formModel") CommentForm comment) {
+    public ModelAndView updateComment(@PathVariable Integer id,
+                                      @Valid @ModelAttribute("formModel") CommentForm comment,
+                                      BindingResult bindingResult) {
+        //　バリデーション処理
+        if (bindingResult.hasErrors()) {
+            ModelAndView mav = new ModelAndView();
+            mav.setViewName("/editComment");
+            return mav;
+        }
         // UrlParameterのidを更新するentityにセット
         comment.setId(id);
         // コメントを更新
